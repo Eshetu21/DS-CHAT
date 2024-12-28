@@ -1,0 +1,21 @@
+{
+  "name": "websocket-service",
+  "version": "1.0.0",
+  "main": "server.ts",
+  "scripts": {
+    "test": "ts-node server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "http": "^0.0.1-security",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
+
