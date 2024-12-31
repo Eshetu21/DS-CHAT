@@ -168,7 +168,7 @@ const Chat = () => {
 
     return () => {
       window.removeEventListener("beforeunload", handleDisconnect);
-      handleDisconnect(); // Ensure disconnect is handled on unmount
+      handleDisconnect(); 
     };
   }, [user]);
 
@@ -188,7 +188,7 @@ const Chat = () => {
         Welcome, {user.email}
       </h1>
 
-      {/* Online Users List */}
+      {}
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           Online Users
@@ -212,9 +212,9 @@ const Chat = () => {
         )}
       </div>
 
-      {/* Chat Box */}
+      {}
       <div className="bg-white rounded-lg shadow-lg p-4">
-        {/* Chat Messages */}
+        {}
         <div className="mb-4">
           {filteredMessages.length > 0 ? (
             filteredMessages.map((msg, idx) => (
@@ -237,7 +237,7 @@ const Chat = () => {
           )}
         </div>
 
-        {/* Message Input */}
+        {}
         <div className="flex space-x-3 items-center">
           <input
             type="text"
