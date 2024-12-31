@@ -17,4 +17,3 @@ const refreshSession = async () => {
 refreshSession();
 
 export default refreshSession;
-

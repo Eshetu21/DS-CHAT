@@ -25,19 +25,25 @@ const Chat = () => {
 
         if (error || !data.user) {
           console.error("Error fetching user:", error || "No user found");
-          router.push("/"); 
+          router.push("/");
         } else {
           setUser(data.user);
+          await supabase.from("presence").upsert([
+            {
+              id: data.user.id,
+              email: data.user.email,
+              status: "online",
+            },
+          ]);
         }
       } catch (error) {
         console.error("Unexpected error:", error);
-        router.push("/"); 
+        router.push("/");
       }
     };
 
     fetchUser();
   }, [router]);
-
 
   useEffect(() => {
     const fetchOnlineUsers = async () => {
@@ -56,7 +62,6 @@ const Chat = () => {
     fetchOnlineUsers();
   }, []);
 
-
   const fetchChatHistory = async () => {
     if (!user || !receiverId) return;
 
@@ -74,7 +79,6 @@ const Chat = () => {
       setMessages(data || []);
     }
   };
-
 
   useEffect(() => {
     const channel = supabase
@@ -114,9 +118,11 @@ const Chat = () => {
       socket.off("receive_message", handleReceiveMessage);
     };
   }, []);
+
   useEffect(() => {
     fetchChatHistory();
   }, [receiverId]);
+
   const sendMessage = async () => {
     if (!user || !receiverId || !message.trim()) {
       alert("Please fill in all fields before sending a message.");
@@ -144,6 +150,27 @@ const Chat = () => {
     }
   };
 
+  useEffect(() => {
+    const handleDisconnect = async () => {
+      if (user) {
+        try {
+          await supabase
+            .from("presence")
+            .update({ status: "offline" })
+            .eq("id", user.id);
+        } catch (error) {
+          console.error("Error updating presence status on disconnect:", error);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleDisconnect);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleDisconnect);
+      handleDisconnect(); // Ensure disconnect is handled on unmount
+    };
+  }, [user]);
 
   if (!user) {
     return <div>Loading...</div>;
@@ -156,61 +183,76 @@ const Chat = () => {
   );
 
   return (
-    <div>
-      <h1>Welcome, {user.email}</h1>
-      <div>
-        <h2>Online Users</h2>
+    <div className="max-w-4xl mx-auto p-6 font-sans">
+      <h1 className="text-2xl font-bold text-gray-700 mb-6">
+        Welcome, {user.email}
+      </h1>
+
+      {/* Online Users List */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">
+          Online Users
+        </h2>
         {onlineUsers.length > 0 ? (
           <ul>
-            {onlineUsers.map((user) => (
-              <li
-                key={user.id}
-                style={{ cursor: "pointer", marginBottom: "0.5rem" }}
-                onClick={() => setReceiverId(user.id)}
-              >
-                {user.email}
-              </li>
-            ))}
+            {onlineUsers
+              .filter((onlineUser) => onlineUser.id !== user.id)
+              .map((user) => (
+                <li
+                  key={user.id}
+                  onClick={() => setReceiverId(user.id)}
+                  className="cursor-pointer p-2 mb-2 rounded-md bg-gray-100 hover:bg-gray-200"
+                >
+                  {user.email}
+                </li>
+              ))}
           </ul>
         ) : (
-          <p>No users are online.</p>
+          <p className="text-gray-600">No users are online.</p>
         )}
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <input
-          type="text"
-          placeholder="Receiver ID"
-          value={receiverId}
-          onChange={(e) => setReceiverId(e.target.value)}
-          style={{ marginRight: "0.5rem" }}
-        />
-        <input
-          type="text"
-          placeholder="Enter your message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          style={{ marginRight: "0.5rem" }}
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-
-      <div>
-        <h2>Messages:</h2>
-        {filteredMessages.length > 0 ? (
-          filteredMessages.map((msg, idx) => (
-            <div key={idx}>
-              <p>
-                <strong>
+      {/* Chat Box */}
+      <div className="bg-white rounded-lg shadow-lg p-4">
+        {/* Chat Messages */}
+        <div className="mb-4">
+          {filteredMessages.length > 0 ? (
+            filteredMessages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`p-2 mb-3 rounded-lg ${
+                  msg.sender_id === user.id
+                    ? "bg-blue-100 text-blue-900 text-right"
+                    : "bg-gray-200 text-gray-900 text-left"
+                }`}
+              >
+                <p className="font-semibold">
                   {msg.sender_id === user.id ? "You" : msg.sender_id}
-                </strong>
-                : {msg.message}
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No messages with this user.</p>
-        )}
+                </p>
+                <p>{msg.message}</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No messages with this user.</p>
+          )}
+        </div>
+
+        {/* Message Input */}
+        <div className="flex space-x-3 items-center">
+          <input
+            type="text"
+            placeholder="Enter your message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            onClick={sendMessage}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none"
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
