@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { sendMagicLink, verifyMagicLinkToken } from "../auth-service/authService";
+import { sendMagicLink, verifyMagicLinkToken } from "../services/services";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -15,7 +15,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.json({ message: "Magic link sent!" });
+    res.json({ message: "Magic link sent. Check your email!" });
   } catch (error) {
     console.error("Error in login handler:", error);
     res.status(500).json({ error: "Internal server error" });
