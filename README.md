@@ -62,3 +62,24 @@ The system uses:
 | **WebSocket Service** |Establishes WebSocket connections. Handles real-time message delivery to online users. | **Real-Time Delivery:** Instant messaging.|None (no direct DB usage).| WebSocket endpoint: `ws://<host>:5003` |
 | **Database (Supabase)** |Provides persistent storage for users and messages, with built-in authentication. | **Integrated Authentication**: Supabase handles user auth and storage. | **Users** and **Messages** tables.| Managed via Supabase dashboard. |
 
+## Workflow Diagram
+```mermaid
+sequenceDiagram
+    participant User as Client (User)
+    participant Auth as Auth Service
+    participant DB as Supabase (Database)
+    participant Chat as Chat Service
+    participant WS as WebSocket Service
+
+    User->>Auth: Request Login via Magic Link
+    Auth->>DB: Store and Send Magic Link to User's Email
+    User->>Auth: Click Magic Link for Verification
+    Auth->>DB: Verify Magic Link and Authenticate User
+    Auth-->>User: Redirect User to Chat Page (if Verified)
+    User->>WS: Establish WebSocket Connection
+    User->>Chat: Send Message (via API)
+    Chat->>DB: Save Message to Database
+    Chat-->>WS: Publish Message Event to WebSocket
+    WS-->>User: Deliver Real-Time Message to Recipient
+
+```
