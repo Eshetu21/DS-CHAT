@@ -83,3 +83,82 @@ sequenceDiagram
     WS-->>User: Deliver Real-Time Message to Recipient
 
 ```
+## Prerequisites
+1. **Supabase Account**
+  - Create Supabase project for authentication and database storage.
+2. **Node.js and npm**
+  - Install the latest version of Node.js and npm.
+3. **Postman**
+  - Use for testing API endpoints and Websocket connections.
+
+## Setup and Installation
+1. **Clone the Repository**
+   ```bash
+   https://github.com/Eshetu21/DS-CHAT.git
+   cd chat-app
+   ```
+2. **Install Dependencies**
+   Each service has its own dependencies. Navigate to each folder and install them:
+   ```bash
+   cd auth-service
+   npm install
+   ```
+   ```bash
+   cd ../chat-service
+   npm install
+   ```
+   ```bash
+   cd ../websocket-service
+   npm install
+   ```
+   ```bash
+   cd ../client
+   npm install
+   ```
+3. **Environmental Variables**
+   Create a .env file for each service:
+   You can get a Supabase url and Anon Key when you create a project in the Supabase              dashboard
+   - Auth Service
+     ```bash
+     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
+     SUPABASE_KEY="<your-supabase-anon-key>"
+     REDIRECT_URL="http://localhost:3000"
+     ```
+   - Chat Service
+     ```bash
+     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
+     SUPABASE_KEY="<your-supabase-anon-key>"
+     ```
+   - WebSocket Service
+     ```bash
+     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
+     SUPABASE_KEY="<your-supabase-anon-key>"
+     ```
+4. **Run Each Service**
+   Start each services on their respective ports by going to each folder and running:
+   ```bash
+     npm run dev
+   ```
+5. **Test the Application**
+   - Access the login page at `http://localhost:3000/login`
+   - Enter an email and click **Send Magic Link**
+   - Click the magic link in your email to be redirected to the chat page.
+   - Send messages to other users and see real-time updates.
+
+## API Endpoints
+|**Endpoin**| **Description**|**Method**|**Example Request Body**|
+|-----------|----------------|----------|------------------------|
+`/auth/login`|Sends link for user authentication|POST|`{"email":"user@example.com"}`|
+`/chat/send`|Sends a message|POST|`{"recipient_id":"...","content":"Hello"}`|
+`/chat/history`|Fetches chat history between users|GET|`?user1=user1-id&user2=user2-id`|
+
+## Testing the Application
+### Login
+1. Access the login page at `http://localhost:3000/login`.
+2. Enter your email and click "Send Magic Link."
+3. Click the link in your email to log in.
+### Chat
+1. Access the chat page at `http://localhost:3000/chat`.
+2. Start sending messages and see real-time updates with other logged-in users.
+
+     
