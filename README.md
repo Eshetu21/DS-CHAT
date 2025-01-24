@@ -42,6 +42,7 @@ This project implements a real-time chat system using a microservices architectu
 ```
 ┌────────────────────────────────────────────────────────┐
 │                Auth Service (Port 5001)                │
+│  - /auth/register                                      │
 │  - /auth/login                                         │
 │  - MongoDB user authentication                         │
 └───────────────┬────────────────────────────────────────┘
@@ -108,7 +109,7 @@ sequenceDiagram
   - Install the latest version of Node.js and npm.
 3. **RabbitMQ Instance**
   - Install RabbitMQ locally or use a hosted RabbitMQ service.
-3. **Postman**
+4. **Postman**
   - Use for testing API endpoints and Websocket connections.
 
 ## Setup and Installation
@@ -139,17 +140,12 @@ sequenceDiagram
    Create a .env file for each service:
      - Auth Service
      ```bash
-     MONGO_URI=mongodb://localhost:27017/auth-db
+     MONGO_URI=mongodb://localhost:27017/auth-service
      JWT_SECRET=your_secret_key
      ```
     - Chat Service
      ```bash
-     MONGO_URI=mongodb://localhost:27017/auth-db
-     JWT_SECRET=your_secret_key
-     ```
-    - WebSocket Service
-     ```bash
-     MONGO_URI=mongodb://localhost:27017/auth-db
+     MONGO_URI=mongodb://localhost:27017/chat-service
      JWT_SECRET=your_secret_key
      ```
     - Frontend
@@ -166,11 +162,6 @@ sequenceDiagram
    ```bash
      npm run dev
    ```
-5. **Test the Application**
-   - Access the login page at `http://localhost:3000/login`
-   - Enter an email and click **Send Magic Link**
-   - Click the magic link in your email to be redirected to the chat page.
-   - Send messages to other users and see real-time updates.
 
 ## API Endpoints
 ### Auth Service
