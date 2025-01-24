@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Head from "next/head";
 
 interface Message {
   sender: string;
@@ -42,9 +43,9 @@ const Chat = () => {
       }
     };
 
-    ws.onerror = (error) => {
+   /*  ws.onerror = (error) => {
       console.error("WebSocket error:", error);
-    };
+    }; */
 
     ws.onclose = () => {
       console.log("WebSocket connection closed");
@@ -97,6 +98,10 @@ const Chat = () => {
   };
 
   return (
+    <>
+     <Head>
+        <title>Chat - Real-Time Chat System</title>
+      </Head>
     <div className="h-screen flex flex-col">
       {}
       <div className="bg-blue-600 text-white text-center py-4 text-xl font-bold">
@@ -156,6 +161,7 @@ const Chat = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

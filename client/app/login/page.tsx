@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Head from "next/head";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -27,6 +28,10 @@ const Login = () => {
   };
 
   return (
+    <>
+     <Head>
+        <title>Login - Real-Time Chat System</title>
+      </Head>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h1>
@@ -75,6 +80,7 @@ const Login = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 
