@@ -1,34 +1,49 @@
 # Realtime Chat System
-This project implements a real-time chat system using microservice architecture.
-The system uses:
-- Supabase for authentication and database storage.
-- Next.js for the frontend interface.
-- Express.js for backend services.
-- Socket.IO for real-time WebSocket communication.
+This project implements a real-time chat system using a microservices architecture. The system is designed for scalability, leveraging MongoDB for database storage, RabbitMQ for message queuing, and WebSocket for real-time communication.
+## Key Technologies
+- MongoDB: Primary database for user data and chat messages.
+- RabbitMQ: Message broker for asynchronous communication between services.
+- Socket.IO: Real-time WebSocket communication.
+- Next.js: Frontend interface for users.
+- Express.js: Backend services for authentication, chat, and WebSocket handling.
+
+## Features
+
+ ### Login and Authentication
+  - Secure user authentication with MongoDB.
+  - Localstorage JWT token-based authentication
+ ### Real-Time Chat
+  - Messages are instantly delivered using WebSockets.
+  - Chat history stored in MongoDB.
+ ### Message Queue
+  - RabbitMQ ensures efficent communication between services.
 
 ## Architecture Overview
 > #### Auth Service
-> - Manages user authentication using Supabase's Magic Link functionality.
+> - Manages user authentication.
+> - MongoDB stores user data.
 > - Redirects users after successful authentication.
 > 
 > #### Chat Service
-> - Stores and retrieves chat messages from the database.
-> - Handles sending and fetching chat messages between users.
-> 
-> #### WebSocket Service
-> - Maintains WebSocket connections using Socket.IO.
-> - Sends real-time messages to connected users.
-> 
-> #### Database (Supabase)
-> - Acts as the primary storage for user data, authentication, and chat messages.
+> - Handles sending and retrieving chat messages.
+> - Stores chat history in MongoDB.
+> - Publishes new message events to RabbitMQ.
 >
+> #### WebSocket Service
+> - Subscribes to RabbitMQ for real-time updates.
+> - Sends real-time messages to connected users using WebSocket.
+> 
+> #### Database (MongoDB)
+> - Stores user data and chat messages.
+>
+
 
 ## Architecture Diagram
 ```
 ┌────────────────────────────────────────────────────────┐
 │                Auth Service (Port 5001)                │
 │  - /auth/login                                         │
-│  - Supabase Magic Link Authentication                  │
+│  - MongoDB user authentication                         │
 └───────────────┬────────────────────────────────────────┘
                 │
                 ▼
@@ -36,14 +51,16 @@ The system uses:
 │                Chat Service (Port 5002)                │
 │  - /chat/send                                          │
 │  - /chat/history                                       │
-│  - Stores and retrieves messages from Supabase         │
+│  - Stores and retrieves messages from Supabase         |
+|  - Publishes events to RabbitMQ                        │
 └───────────────┬────────────────────────────────────────┘
                 │
                 ▼
 ┌────────────────────────────────────────────────────────┐
 │               WebSocket Service (Port 5003)            │
+│  - Subscribes to RabbitMQ                              │
 │  - Real-time communication using Socket.IO             │
-│  - Broadcasts messages to clients                      │
+│  - Sends messages to connected clients                 │
 └────────────────────────────────────────────────────────┘
                 │
                 ▼
@@ -57,37 +74,40 @@ The system uses:
 
 | Micro-service    | Responsibilities                                                                                                            | Key Feature                                        | Database Entities                                           | API Endpoints                                                                                   |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| **Auth Service** |Manages user authentication via Supabase Magic Link. Redirects users to the chat page after sucessful login. | **Magic Link Authentication:** Simplifies login flow | **Users:** Contains user email and session data | `POST /auth/login`: Sends a magic link to the user<br>|
-| **Chat Service** | Handles message creation and retrieval between users. Stores chat history in Supabase.| **Persistent Message Storage:** Stores messages. | **Messages:** Stores sender, recipient, and content | `POST /chat/send`: Sends a new message <br>`GET /chat/history`: Fetches chat history |
-| **WebSocket Service** |Establishes WebSocket connections. Handles real-time message delivery to online users. | **Real-Time Delivery:** Instant messaging.|None (no direct DB usage).| WebSocket endpoint: `ws://<host>:5003` |
-| **Database (Supabase)** |Provides persistent storage for users and messages, with built-in authentication. | **Integrated Authentication**: Supabase handles user auth and storage. | **Users** and **Messages** tables.| Managed via Supabase dashboard. |
+| **Auth Service** |Manages user authentication using MongoDB. Redirects users to the chat page after sucessful login. | **Authentication Management:** Simplifies login flow | **Users:** Stores user email and hased passwords | `POST /auth/register`: Register a user `POST /auth/login`: Login a user<br>|
+| **Chat Service** | Handles message creation and retrieval between users. Publishes message events to RabbitMQ.| **Persistent Message Storage:** Stores messages. | **Messages:** Stores sender, recipient, and content | `POST /chat/send`: Sends a new message <br>`GET /chat/history`: Fetches chat history |
+| **WebSocket Service** |Listens to RabbitMQ for events and sends real-time messages to users via WebSocket. | **Real-Time Delivery:** Instant messaging.|None (no direct DB usage).| WebSocket endpoint: `ws://<host>:5003` |
+| **Database (MongoDB)** |Provides persistent storage for users and messages. | **Scalable Storage** | **Users** and **Messages** tables.| Managed via MongoDB. |
 
 ## Workflow Diagram
 ```mermaid
 sequenceDiagram
     participant User as Client (User)
     participant Auth as Auth Service
-    participant DB as Supabase (Database)
+    participant DB as MongoDB (Database)
     participant Chat as Chat Service
+    participant MQ as RabbitMQ (Message Queue)
     participant WS as WebSocket Service
 
-    User->>Auth: Request Login via Magic Link
-    Auth->>DB: Store and Send Magic Link to User's Email
-    User->>Auth: Click Magic Link for Verification
-    Auth->>DB: Verify Magic Link and Authenticate User
-    Auth-->>User: Redirect User to Chat Page (if Verified)
-    User->>WS: Establish WebSocket Connection
+    User->>Auth: Request Login
+    Auth->>DB: Verify and Authenticate User
+    Auth-->>User: Respond with Auth Token
+    User->>WS: Establish WebSocket Connection (Token Auth)
     User->>Chat: Send Message (via API)
-    Chat->>DB: Save Message to Database
-    Chat-->>WS: Publish Message Event to WebSocket
+    Chat->>DB: Save Message to MongoDB
+    Chat->>MQ: Publish New Message Event
+    MQ->>WS: Forward New Message Event
     WS-->>User: Deliver Real-Time Message to Recipient
+
 
 ```
 ## Prerequisites
-1. **Supabase Account**
-  - Create Supabase project for authentication and database storage.
+1. **MongoDB Instance**
+  - Set up a local or cloud MongoDB instance (e.g., MongoDB Atlas).
 2. **Node.js and npm**
   - Install the latest version of Node.js and npm.
+3. **RabbitMQ Instance**
+  - Install RabbitMQ locally or use a hosted RabbitMQ service.
 3. **Postman**
   - Use for testing API endpoints and Websocket connections.
 
@@ -117,23 +137,30 @@ sequenceDiagram
    ```
 3. **Environmental Variables**
    Create a .env file for each service:
-   You can get a Supabase url and Anon Key when you create a project in the Supabase              dashboard
-   - Auth Service
+     - Auth Service
      ```bash
-     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
-     SUPABASE_KEY="<your-supabase-anon-key>"
-     REDIRECT_URL="http://localhost:3000"
+     MONGO_URI=mongodb://localhost:27017/auth-db
+     JWT_SECRET=your_secret_key
      ```
-   - Chat Service
+    - Chat Service
      ```bash
-     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
-     SUPABASE_KEY="<your-supabase-anon-key>"
+     MONGO_URI=mongodb://localhost:27017/auth-db
+     JWT_SECRET=your_secret_key
      ```
-   - WebSocket Service
+    - WebSocket Service
      ```bash
-     SUPABASE_URL="https://<your-supabase-url>.supabase.co"
-     SUPABASE_KEY="<your-supabase-anon-key>"
+     MONGO_URI=mongodb://localhost:27017/auth-db
+     JWT_SECRET=your_secret_key
      ```
+    - Frontend
+    ```bash
+    NEXT_PUBLIC_API_URL=http://localhost:5001
+    NEXT_PUBLIC_WS_URL=ws://localhost:5003
+   ```
+4. **Start RabbitMQ**
+    ```bash
+    rabbitmq-service start
+    ```
 4. **Run Each Service**
    Start each services on their respective ports by going to each folder and running:
    ```bash
@@ -146,19 +173,26 @@ sequenceDiagram
    - Send messages to other users and see real-time updates.
 
 ## API Endpoints
-|**Endpoin**| **Description**|**Method**|**Example Request Body**|
+### Auth Service
+|**Endpoint**| **Description**|**Method**|**Example Request Body**|
 |-----------|----------------|----------|------------------------|
-`/auth/login`|Sends link for user authentication|POST|`{"email":"user@example.com"}`|
+`/auth/register`|Register new user|POST|`{"email":"user@example.com","password":"123456"}`|
+`/auth/login`|Login a user|POST|`{"email":"user@example.com","password":"123456"}`|
+
+
+### Chat Service
+|**Endpoint**| **Description**|**Method**|**Example Request Body**|
+|-----------|----------------|----------|------------------------|
 `/chat/send`|Sends a message|POST|`{"recipient_id":"...","content":"Hello"}`|
 `/chat/history`|Fetches chat history between users|GET|`?user1=user1-id&user2=user2-id`|
 
 ## Testing the Application
 ### Login
 1. Access the login page at `http://localhost:3000/login`.
-2. Enter your email and click "Send Magic Link."
-3. Click the link in your email to log in.
-### Chat
+2. Register or login with valid credentials
+### Real-Time Chat
 1. Access the chat page at `http://localhost:3000/chat`.
 2. Start sending messages and see real-time updates with other logged-in users.
+3. Observe real-time updates via WebSocket.
 
      
