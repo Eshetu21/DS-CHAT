@@ -195,4 +195,13 @@ sequenceDiagram
 2. Start sending messages and see real-time updates with other logged-in users.
 3. Observe real-time updates via WebSocket.
 
+### Screenshots
+Here are some screenshots of the app: 
+<p>
+  <img src="client/screenshot/register.png" alt="Register" width="500" />
+  <img src="client/screenshot/login.png" alt="Login" width="500"/>
+  <img src="client/screenshot/chat-2.png" alt="Chat-2"/>
+</p>
+
+
      
