@@ -83,25 +83,25 @@ This project implements a real-time chat system using a microservices architectu
 ## Workflow Diagram
 ```mermaid
 sequenceDiagram
-    participant User as User
     participant AuthService as Auth Service
     participant MongoDB as MongoDB (Database)
     participant ChatService as Chat Service
     participant RabbitMQ as RabbitMQ (Message Queue)
     participant WebSocket as WebSocket Service
+    participant User as User
 
     User ->> AuthService: Request Login
     AuthService ->> MongoDB: Verify and Authenticate User
-    MongoDB -->> AuthService: User Authenticated
     AuthService -->> User: Respond with Auth Token
-
-    User ->> WebSocket: Establish WebSocket Connection (Token Auth)
+    User -->> WebSocket: Establish WebSocket Connection (Token Auth)
+    
 
     User ->> ChatService: Send Message (via API)
     ChatService ->> MongoDB: Save Message to MongoDB
     ChatService ->> RabbitMQ: Publish New Message Event
     RabbitMQ ->> WebSocket: Forward New Message Event
     WebSocket -->> User: Deliver Real-Time Message to Recipient
+
 
 
 ```
