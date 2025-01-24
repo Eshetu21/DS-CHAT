@@ -3,7 +3,7 @@ This project implements a real-time chat system using a microservices architectu
 ## Key Technologies
 - MongoDB: Primary database for user data and chat messages.
 - RabbitMQ: Message broker for asynchronous communication between services.
-- Socket.IO: Real-time WebSocket communication.
+- Websocket: Real-time WebSocket communication.
 - Next.js: Frontend interface for users.
 - Express.js: Backend services for authentication, chat, and WebSocket handling.
 
