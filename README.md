@@ -201,6 +201,7 @@ Here are some screenshots of the app:
   <img src="client/screenshot/register.png" alt="Register" width="500" />
   <img src="client/screenshot/login.png" alt="Login" width="500"/>
   <img src="client/screenshot/chat-2.png" alt="Chat-2"/>
+  <img src="client/screenshot/rabbit.png" alt="Rabbit"/>
 </p>
 
 
