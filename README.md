@@ -198,8 +198,8 @@ sequenceDiagram
 ### Screenshots
 Here are some screenshots of the app: 
  <p>
-  <img src="client/screenshot/register.png" alt="Register"/>
-  <img src="client/screenshot/login.png" alt="Login"/>
+  <img src="client/screenshot/register.png" alt="Register" width="500"/>
+  <img src="client/screenshot/login.png" alt="Login" width="500"/>
  </p>
   <img src="client/screenshot/chat-2.png" alt="Chat-2"/>
   <img src="client/screenshot/rabbit.png" alt="Rabbit"/>
