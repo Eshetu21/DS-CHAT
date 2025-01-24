@@ -116,7 +116,7 @@ sequenceDiagram
 1. **Clone the Repository**
    ```bash
    https://github.com/Eshetu21/DS-CHAT.git
-   cd chat-app
+   cd ds-chat
    ```
 2. **Install Dependencies**
    Each service has its own dependencies. Navigate to each folder and install them:
