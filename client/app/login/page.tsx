@@ -4,32 +4,34 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const Register = () => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:5001/auth/register`, {
+      const response = await axios.post(`http://localhost:5001/auth/login`, {
         username,
         password,
       });
-      alert(response.data.message);
-      router.push("/login");
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", username);
+      router.push("/chat");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h1>
         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
-        <form onSubmit={handleRegister} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="username" className="block text-gray-600 mb-2">
               Username
@@ -62,13 +64,13 @@ const Register = () => {
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200"
           >
-            Register
+            Login
           </button>
         </form>
         <p className="text-gray-600 text-sm text-center mt-4">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
-            Login
+          Don't have an account?{" "}
+          <a href="/" className="text-blue-500 hover:underline">
+            Sign up
           </a>
         </p>
       </div>
@@ -76,4 +78,5 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
+

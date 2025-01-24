@@ -1,16 +1,17 @@
 import express from "express";
-import bodyParser from "body-parser";
+import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/authRoutes";
+import authRoutes from "./src/routes/authRoutes";
+import { connectDB } from "./src/config/database";
+
+dotenv.config();
 
 const app = express();
-
 app.use(cors());
+app.use(express.json());
 
-app.use(bodyParser.json());
+app.use(authRoutes);
 
-
-app.use("/auth", authRoutes);
+connectDB();
 
 export default app;
-

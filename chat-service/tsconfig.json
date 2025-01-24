@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ESNext",
     "module": "CommonJS",
-    "esModuleInterop": true,
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ]
-  }
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"]  // Ensure Node.js types are included
+  },
+  "include": ["src"],  // Adjust based on your project structure
+  "exclude": ["node_modules"]
 }

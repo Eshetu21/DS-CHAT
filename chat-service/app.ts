@@ -1,13 +1,18 @@
 import express from "express";
-import bodyParser from "body-parser";
+import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/chatRoutes";
+import chatRoutes from "./src/routes/chatRoutes";
+import { connectDB } from "./src/config/database";
+
+dotenv.config();
 
 const app = express();
-
 app.use(cors());
+app.use(express.json());
 
-app.use(bodyParser.json());
-app.use("/chat", authRoutes);
+app.use(chatRoutes);
+
+connectDB();
 
 export default app;
+

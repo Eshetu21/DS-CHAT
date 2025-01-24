@@ -1,21 +1,21 @@
 {
-  "name": "websocket-service",
-  "version": "1.0.0",
-  "main": "server.ts",
-  "scripts": {
-    "test": "ts-node server.ts"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
+    "amqplib": "^0.10.5",
     "cors": "^2.8.5",
-    "http": "^0.0.1-security",
-    "socket.io": "^4.8.1"
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "@types/amqplib": "^0.10.6",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/node": "^22.10.10",
+    "@types/ws": "^8.5.14",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only index.ts",
+    "start": "node dist/index.js"
   }
 }
-
