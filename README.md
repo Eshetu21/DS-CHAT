@@ -60,7 +60,7 @@ This project implements a real-time chat system using a microservices architectu
 ┌────────────────────────────────────────────────────────┐
 │               WebSocket Service (Port 5003)            │
 │  - Subscribes to RabbitMQ                              │
-│  - Real-time communication using Socket.IO             │
+│  - Real-time communication using WebSockets            │
 │  - Sends messages to connected clients                 │
 └────────────────────────────────────────────────────────┘
                 │
