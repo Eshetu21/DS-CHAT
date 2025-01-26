@@ -52,7 +52,7 @@ This project implements a real-time chat system using a microservices architectu
 │                Chat Service (Port 5002)                │
 │  - /chat/send                                          │
 │  - /chat/history                                       │
-│  - Stores and retrieves messages from Supabase         |
+│  - Stores and retrieves messages from MongoDB          |
 |  - Publishes events to RabbitMQ                        │
 └───────────────┬────────────────────────────────────────┘
                 │
